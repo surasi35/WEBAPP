@@ -9,25 +9,22 @@
     <?php
     $login=$_POST["login"];
     $pwd=$_POST["pwd"];
-    if($_POST['login'] == "admin" && $_POST['pwd'] == "1234" ){
-
-        $_SESSION['username']='admin';
-        $_SESSION['role']='a';
+    $conn=new PDO("mysql:host=localhost;dbname=webboard;charset=utf8","root","");
+    $sql="SELECT * FROM user where login='$login' and password=sha1('$pwd')";
+        $result=$conn->query($sql);
+        if($result->rowCount()==1){
+        $data=$result->fetch(PDO::FETCH_ASSOC);
+        $_SESSION['username']=$data['login'];
+        $_SESSION['role']=$data['role'];
+        $_SESSION['user_id']=$data['id'];
         $_SESSION['id']=session_id();
         header("location:index.php");
         die();
-
-    } elseif ($_POST['login'] == "member" && $_POST['pwd'] == "mem1234" ){
-
-        $_SESSION['username']='member';
-        $_SESSION['role']='m';
-        $_SESSION['id']=session_id();
-        header("location:index.php");
-        die();
-
-    } else{
+     }else{
         $_SESSION['error']='error';
         header("location:login.php");
         die();
-    }
+     }
+     $conn=null;
+    
 ?>
